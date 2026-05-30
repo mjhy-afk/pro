@@ -48,46 +48,44 @@
     const username = localStorage.getItem('currentUsername') || 'غير معروف';
     document.getElementById('welcomeMsg').innerText = `أهلاً بك يا ${visitorName}!`;
 
-    // رابط الخزان السحابي الخاص بك لجمع الطلبات
-    const cloudUrl = 'https://kvdb.io/MN87XgE9b6vFfR7UqDZm6A/yazan_orders';
-
-    document.getElementById('orderForm').addEventListener('submit', async function(e) {
+    document.getElementById('orderForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const btn = document.getElementById('submitBtn');
-        btn.innerText = 'جاري الإرسال سحابياً...';
+        btn.innerText = 'جاري الإرسال الفوري...';
         btn.disabled = true;
 
         const service = document.getElementById('service').value;
         const count = document.getElementById('count').value;
-        const newOrder = { username: `${visitorName} (${username})`, service, count, time: new Date().toLocaleTimeString('ar-YE') };
 
-        try {
-            // جلب الطلبات السابقة من السحاب أولاً
-            let res = await fetch(cloudUrl);
-            let orders = [];
-            if (res.ok) {
-                const text = await res.text();
-                orders = text ? JSON.parse(text) : [];
+        // نص الرسالة المنظم الذي سيصلك على تليجرام
+        const textMessage = `🚨 طلب جديد وصلك يا يزن:\n\n👤 العميل: ${visitorName}\n🔐 اليوزر: ${username}\n🛠️ الخدمة: ${service}\n🔢 العدد: ${count}`;
+
+        // معلومات البوت الخاص بي لتوصيل رسائلك بأمان لقناتك
+        const telegramToken = '7471206680:AAEbWqLp7wsh_TByvG61Kscf2I06PHe9wNo';
+        const telegramChatId = '-1002341998595'; 
+
+        const telegramUrl = `https://api.telegram.org/bot${telegramToken}/sendMessage?chat_id=${telegramChatId}&text=${encodeURIComponent(textMessage)}`;
+
+        fetch(telegramUrl)
+        .then(response => {
+            if(response.ok) {
+                document.getElementById('status').style.color = 'green';
+                document.getElementById('status').innerText = 'تم إرسال طلبك بنجاح للمشرف!';
+                document.getElementById('service').value = '';
+                document.getElementById('count').value = '';
+            } else {
+                document.getElementById('status').style.color = 'red';
+                document.getElementById('status').innerText = 'فشل الإرسال، حاول مجدداً.';
             }
-            
-            // إضافة الطلب الجديد وحفظ القائمة مجدداً في السحاب
-            orders.push(newOrder);
-            await fetch(cloudUrl, {
-                method: 'POST',
-                body: JSON.stringify(orders)
-            });
-
-            document.getElementById('status').style.color = 'green';
-            document.getElementById('status').innerText = 'تم إرسال طلبك عبر السحاب بنجاح!';
-            document.getElementById('service').value = '';
-            document.getElementById('count').value = '';
-        } catch (err) {
+        })
+        .catch(err => {
             document.getElementById('status').style.color = 'red';
-            document.getElementById('status').innerText = 'حدث خطأ في الاتصال بالسحاب، حاول مجدداً.';
-        } finally {
+            document.getElementById('status').innerText = 'خطأ في الشبكة، حاول مرة أخرى.';
+        })
+        .finally(() => {
             btn.innerText = 'إرسال الطلب للمشرف';
             btn.disabled = false;
-        }
+        });
     });
 </script>
 </body>
