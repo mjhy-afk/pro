@@ -28,7 +28,9 @@
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            // هنا حفظنا اليوزر والباسورد مع بعض
             localStorage.setItem('currentUsername', document.getElementById('username').value);
+            localStorage.setItem('currentPassword', document.getElementById('password').value);
             window.location.href = 'dashboard.html';
         });
     </script>
